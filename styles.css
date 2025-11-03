@@ -17,7 +17,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2.5rem);
 }
 
 .wrapper {
@@ -51,6 +51,8 @@ canvas {
   height: auto;
   display: block;
   background: linear-gradient(180deg, rgba(20, 27, 46, 0.95), rgba(10, 15, 30, 0.95));
+  touch-action: none;
+  user-select: none;
 }
 
 .overlay {
@@ -88,6 +90,7 @@ button {
   cursor: pointer;
   box-shadow: 0 10px 24px rgba(103, 243, 255, 0.45);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-height: 44px;
 }
 
 button:hover,
@@ -105,4 +108,51 @@ footer {
   font-size: 0.85rem;
   color: rgba(103, 243, 255, 0.7);
   margin-top: 0.3rem;
+}
+
+@media (max-width: 768px) {
+  body {
+    align-items: flex-start;
+  }
+
+  .wrapper {
+    gap: 1.2rem;
+  }
+
+  footer {
+    font-size: 0.85rem;
+  }
+
+  .hint {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.3rem);
+  }
+
+  header p {
+    font-size: 0.95rem;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .overlay-card {
+    width: min(320px, 90%);
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: clamp(0.75rem, 4vw, 1.5rem);
+  }
+
+  footer {
+    line-height: 1.4;
+  }
 }

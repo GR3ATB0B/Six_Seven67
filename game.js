@@ -6,6 +6,9 @@ const overlayMessage = document.getElementById("overlay-message");
 const startBtn = document.getElementById("start-btn");
 
 const config = {
+  baseWidth: canvas.width,
+  baseHeight: canvas.height,
+  aspect: canvas.width / canvas.height,
   width: canvas.width,
   height: canvas.height,
   baseSpawnInterval: 1000,
@@ -235,6 +238,9 @@ canvas.addEventListener("pointerdown", (event) => {
 });
 
 window.addEventListener("resize", () => resizeCanvas());
+window.addEventListener("orientationchange", () => {
+  window.setTimeout(resizeCanvas, 120);
+});
 resizeCanvas();
 drawSplash();
 
@@ -367,21 +373,31 @@ function drawNumber(num) {
 }
 
 function drawHud() {
+  const hudHeight = config.height < 360 ? 70 : 60;
   ctx.fillStyle = "rgba(0, 8, 24, 0.55)";
-  ctx.fillRect(0, 0, config.width, 60);
+  ctx.fillRect(0, 0, config.width, hudHeight);
 
+  const fontSize = config.width < 480 ? 16 : 18;
   ctx.fillStyle = "#67f3ff";
-  ctx.font = '18px "Segoe UI", sans-serif';
+  ctx.font = `${fontSize}px "Segoe UI", sans-serif`;
   ctx.textBaseline = "middle";
 
-  ctx.fillText(`Score: ${state.score}`, 20, 30);
-  ctx.fillText(`Level: ${state.level}`, 220, 30);
-  ctx.fillText(`Wave: ${Math.max(0, state.timer).toFixed(1)}s`, 400, 30);
+  const centerY = hudHeight / 2;
+  const waveRemaining = Math.max(0, state.timer);
+  const waveLabel = `Wave: ${waveRemaining.toFixed(config.width < 420 ? 0 : 1)}s`;
+
+  ctx.textAlign = "left";
+  ctx.fillText(`Score: ${state.score}`, 20, centerY);
+
+  ctx.textAlign = "center";
+  ctx.fillText(`Level: ${state.level} | ${waveLabel}`, config.width / 2, centerY);
 
   const livesRemaining = Math.max(0, Math.floor(state.lives));
   const livesLost = Math.max(0, config.maxLives - livesRemaining);
   const livesText = `Lives: ${"#".repeat(livesRemaining)}${"-".repeat(livesLost)}`;
-  ctx.fillText(livesText, 620, 30);
+
+  ctx.textAlign = "right";
+  ctx.fillText(livesText, config.width - 20, centerY);
 }
 
 function spawnNumber() {
@@ -480,10 +496,23 @@ function translatePointer(event) {
 
 function resizeCanvas() {
   const dpr = window.devicePixelRatio || 1;
-  canvas.width = config.width * dpr;
-  canvas.height = config.height * dpr;
+  const viewportWidth = Math.max(320, window.innerWidth - 24);
+  const viewportHeight = Math.max(320, window.innerHeight - 180);
+  let targetWidth = Math.min(config.baseWidth, viewportWidth);
+  let targetHeight = targetWidth / config.aspect;
+
+  if (targetHeight > viewportHeight) {
+    targetHeight = viewportHeight;
+    targetWidth = targetHeight * config.aspect;
+  }
+
+  config.width = Math.round(targetWidth);
+  config.height = Math.round(targetHeight);
+
   canvas.style.width = `${config.width}px`;
   canvas.style.height = `${config.height}px`;
+  canvas.width = Math.round(config.width * dpr);
+  canvas.height = Math.round(config.height * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   if (!state.running) {
     drawSplash();
