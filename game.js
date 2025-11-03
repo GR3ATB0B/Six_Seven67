@@ -384,13 +384,21 @@ function drawHud() {
 
   const centerY = hudHeight / 2;
   const waveRemaining = Math.max(0, state.timer);
-  const waveLabel = `Wave: ${waveRemaining.toFixed(config.width < 420 ? 0 : 1)}s`;
+  const compactHud = config.width < 420;
+  const waveLabel = compactHud
+    ? `${waveRemaining.toFixed(0)}s`
+    : `Wave: ${waveRemaining.toFixed(1)}s`;
 
   ctx.textAlign = "left";
   ctx.fillText(`Score: ${state.score}`, 20, centerY);
 
   ctx.textAlign = "center";
-  ctx.fillText(`Level: ${state.level} | ${waveLabel}`, config.width / 2, centerY);
+  if (compactHud) {
+    ctx.fillText(`Lvl ${state.level}`, config.width / 2, centerY - fontSize * 0.55);
+    ctx.fillText(waveLabel, config.width / 2, centerY + fontSize * 0.55);
+  } else {
+    ctx.fillText(`Level: ${state.level} | ${waveLabel}`, config.width / 2, centerY);
+  }
 
   const livesRemaining = Math.max(0, Math.floor(state.lives));
   const livesLost = Math.max(0, config.maxLives - livesRemaining);
@@ -414,7 +422,11 @@ function spawnNumber() {
   const fontSize = 28 + Math.random() * 24;
   const radius = fontSize * 0.7;
   const x = radius + Math.random() * (config.width - radius * 2);
-  const speed = (config.minSpeed + Math.random() * (config.maxSpeed - config.minSpeed)) * (1 + (state.level - 1) * 0.12);
+  const heightScale = config.height / config.baseHeight;
+  const speed =
+    (config.minSpeed + Math.random() * (config.maxSpeed - config.minSpeed)) *
+    (1 + (state.level - 1) * 0.12) *
+    heightScale;
 
   const label = value.toString();
   // Nudges to better vertically center odd-sized fonts.
@@ -496,18 +508,45 @@ function translatePointer(event) {
 
 function resizeCanvas() {
   const dpr = window.devicePixelRatio || 1;
-  const viewportWidth = Math.max(320, window.innerWidth - 24);
-  const viewportHeight = Math.max(320, window.innerHeight - 180);
-  let targetWidth = Math.min(config.baseWidth, viewportWidth);
-  let targetHeight = targetWidth / config.aspect;
+  const prevWidth = config.width || config.baseWidth;
+  const prevHeight = config.height || config.baseHeight;
+  const isSmallScreen = window.innerWidth <= 720;
 
-  if (targetHeight > viewportHeight) {
-    targetHeight = viewportHeight;
-    targetWidth = targetHeight * config.aspect;
+  const horizontalMargin = 24;
+  const verticalMargin = isSmallScreen ? 140 : 180;
+
+  const viewportWidth = Math.max(320, window.innerWidth - horizontalMargin);
+  const viewportHeight = Math.max(320, window.innerHeight - verticalMargin);
+
+  let targetWidth;
+  let targetHeight;
+
+  if (isSmallScreen) {
+    targetWidth = Math.min(config.baseWidth, viewportWidth);
+    const desiredHeight = Math.max(config.baseHeight * 0.85, targetWidth * 1.75);
+    targetHeight = Math.min(desiredHeight, viewportHeight);
+  } else {
+    targetWidth = Math.min(config.baseWidth, viewportWidth);
+    targetHeight = targetWidth / config.aspect;
+    if (targetHeight > viewportHeight) {
+      targetHeight = viewportHeight;
+      targetWidth = targetHeight * config.aspect;
+    }
   }
 
   config.width = Math.round(targetWidth);
   config.height = Math.round(targetHeight);
+
+  const scaleX = prevWidth ? config.width / prevWidth : 1;
+  const scaleY = prevHeight ? config.height / prevHeight : 1;
+  const scaleRadius = Math.min(scaleX, scaleY);
+
+  state.numbers.forEach((num) => {
+    num.x *= scaleX;
+    num.y *= scaleY;
+    num.radius *= scaleRadius;
+    num.speed *= scaleY;
+  });
 
   canvas.style.width = `${config.width}px`;
   canvas.style.height = `${config.height}px`;
