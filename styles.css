@@ -1,0 +1,108 @@
+:root {
+  color-scheme: dark;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(circle at top, #161b2f, #05060a);
+  color: #f4f7ff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.wrapper {
+  width: min(960px, 100%);
+  display: grid;
+  gap: 1.5rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #67f3ff;
+  text-shadow: 0 0 8px rgba(103, 243, 255, 0.5);
+}
+
+header span {
+  color: #ffe067;
+}
+
+.game-container {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(8, 12, 35, 0.45);
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: linear-gradient(180deg, rgba(20, 27, 46, 0.95), rgba(10, 15, 30, 0.95));
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background: rgba(8, 12, 35, 0.6);
+  display: grid;
+  place-items: center;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.overlay-card {
+  background: rgba(10, 18, 34, 0.85);
+  border: 2px solid rgba(103, 243, 255, 0.4);
+  border-radius: 1rem;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+button {
+  font: inherit;
+  padding: 0.6rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(120deg, #67f3ff, #00c3ff);
+  color: #041526;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(103, 243, 255, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover,
+button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(103, 243, 255, 0.6);
+}
+
+footer {
+  font-size: 0.95rem;
+  color: rgba(244, 247, 255, 0.75);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: rgba(103, 243, 255, 0.7);
+  margin-top: 0.3rem;
+}

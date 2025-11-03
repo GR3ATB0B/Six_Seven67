@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>67 Frenzy</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="wrapper">
+    <header>
+      <h1>67 Frenzy</h1>
+      <p>Only the chosen <span>67</span> can save the memeiverse.</p>
+    </header>
+
+    <section class="game-container">
+      <canvas id="game" width="900" height="600" aria-label="67 Frenzy canvas"></canvas>
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <h2 id="overlay-title">Ready?</h2>
+          <p id="overlay-message">Click start to begin the frenzy.</p>
+          <button id="start-btn" type="button">Start</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Click the <strong>67</strong>s, avoid the fakes. Miss three sacred numbers and the meme collapses.</p>
+      <p class="hint">Tip: hit space to restart when you inevitably fail.</p>
+    </footer>
+  </main>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
